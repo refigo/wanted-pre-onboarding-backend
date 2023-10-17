@@ -7,6 +7,6 @@ export class UserEntity {
 	id: number;
 
 	// name
-	@Column({ name: 'name', type: 'varchar'})
+	@Column({ name: 'name', type: 'varchar', length: 50})
 	name: string;
 }
