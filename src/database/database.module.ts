@@ -4,6 +4,7 @@ import { CompanyEntity } from './entities/company.entity';
 import { UserEntity } from './entities/user.entity';
 import { typeORMConfig } from 'src/configs/typeorm.config';
 import { JobRecruitmentEntity } from './entities/job.recruitment.entity';
+import { JobApplicationEntity } from './entities/job.application.entity';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { JobRecruitmentEntity } from './entities/job.recruitment.entity';
     TypeOrmModule.forFeature([
       CompanyEntity,
       UserEntity,
-      JobRecruitmentEntity
+      JobRecruitmentEntity,
+      JobApplicationEntity
   ])],
 })
 export class DatabaseModule {}

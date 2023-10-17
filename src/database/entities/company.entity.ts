@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { JobRecruitmentEntity } from "./job.recruitment.entity";
 
 @Entity({ name: 'COMPANY' })
@@ -20,7 +20,6 @@ export class CompanyEntity {
 	@Column({ name: 'area', type: 'varchar'})
 	area: string;
 
-	// job_recruitment_id
 	@OneToMany(() => JobRecruitmentEntity, (jre) => jre.companyEntity)
 	jobRecruitmentEntities: JobRecruitmentEntity[];
 }

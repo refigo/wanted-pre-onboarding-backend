@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { JobApplicationEntity } from "./job.application.entity";
 
 @Entity({ name: 'USER' })
 export class UserEntity {
@@ -9,4 +10,7 @@ export class UserEntity {
 	// name
 	@Column({ name: 'name', type: 'varchar', length: 50})
 	name: string;
+
+	@OneToMany(() => JobApplicationEntity, (jae) => jae.userEntity)
+	jobApplicationEntities: JobApplicationEntity[];
 }

@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CompanyEntity } from "./company.entity";
+import { JobApplicationEntity } from "./job.application.entity";
 
 @Entity({ name: 'JOB_RECRUITMENT' })
 export class JobRecruitmentEntity {
@@ -27,4 +28,7 @@ export class JobRecruitmentEntity {
 	@ManyToOne(() => CompanyEntity)
 	@JoinColumn({ name: 'company_id' })
 	companyEntity: CompanyEntity;
+
+	@OneToMany(() => JobApplicationEntity, (jae) => jae.jobRecruitmentEntity)
+	jobApplicationEntities: JobApplicationEntity[];
 }
