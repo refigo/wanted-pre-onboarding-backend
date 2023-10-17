@@ -1,13 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({ name: 'COMPANY' })
+@Unique(['name'])
 export class CompanyEntity {
 	// id
 	@PrimaryGeneratedColumn({ name: 'id', type: 'bigint' })
 	id: number;
 
 	// name
-	@Column({ name: 'name', type: 'varchar'})
+	@Column({ name: 'name', type: 'varchar', length: 50})
 	name: string;
 
 	// nation
