@@ -31,6 +31,11 @@ export class JobController {
     return await this.recruitService.remove(+id);
   }
 
+  @Get('/recruitments')
+  async findAllRecruitments() {
+    return await this.recruitService.findAll();
+  }
+
   @Post()
   create(@Body() createJobDto: CreateJobDto) {
     return this.jobService.create(createJobDto);

@@ -75,8 +75,10 @@ export class RecruitmentsService {
     return ;
   }
 
-  findAll() {
-    return `This action returns all recruitments`;
+  async findAll() {
+    const foundRecruits = await this.jobRecruitmentEntity.find();
+    foundRecruits.sort((a, b) => a.id - b.id);
+    return foundRecruits;
   }
 
   findOne(id: number) {
