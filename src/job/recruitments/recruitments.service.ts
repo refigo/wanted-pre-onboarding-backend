@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
 import { CompanyEntity } from 'src/database/entities/company.entity';
 import { ResponseJobRecruitmentDto } from './dto/response-job-recruitment.dto';
+import { ResponseDetailsJobRecruitmentDto } from './dto/response-details-job-recruitment.dto';
 
 @Injectable()
 export class RecruitmentsService {
@@ -77,7 +78,7 @@ export class RecruitmentsService {
   }
 
   async findAll() {
-    const ret: ResponseJobRecruitmentDto[] = [];
+    let ret: ResponseJobRecruitmentDto[] = [];
     const foundRecruits = await this.jobRecruitmentEntity.find({
       relations: {
         companyEntity: true,
@@ -98,7 +99,37 @@ export class RecruitmentsService {
     return ret;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} recruitment`;
+  async findOne(id: number) {
+    let ret: ResponseDetailsJobRecruitmentDto;
+    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+      relations: {
+        companyEntity: {
+          jobRecruitmentEntities: true,
+        }
+      },
+      where: {
+        id: id,
+      }
+    });
+    let otherRecruitIds: number[] = [];
+    foundRecruit.companyEntity
+      .jobRecruitmentEntities.sort((a, b) => a.id - b.id);
+    for (const eachRecruit 
+    of foundRecruit.companyEntity.jobRecruitmentEntities) {
+      if (+(eachRecruit.id) === id) continue;
+      otherRecruitIds.push(+(eachRecruit.id));
+    }
+    ret = {
+      recruitment_id: +(foundRecruit.id),
+      company_name: foundRecruit.companyEntity.name,
+      nation: foundRecruit.companyEntity.nation,
+      area: foundRecruit.companyEntity.area,
+      position: foundRecruit.position,
+      compensation: foundRecruit.compensation,
+      skills: foundRecruit.skills,
+      contents: foundRecruit.contents,
+      recruitment_ids_of_company: otherRecruitIds,
+    };
+    return ret;
   }
 }
