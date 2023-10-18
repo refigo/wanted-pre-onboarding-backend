@@ -37,8 +37,8 @@ export class JobController {
   }
 
   @Get('/recruitments/:id/details')
-  async findOneRecruitment(@Param('id') id: string) {
-    return await this.recruitService.findOne(+id);
+  async findOneRecruitmentDetails(@Param('id') id: string) {
+    return await this.recruitService.findOneDetails(+id);
   }
 
   @Post()
