@@ -115,6 +115,9 @@ export class JobRecruitmentsService {
         id: id,
       }
     });
+    if (foundRecruit === null) {
+      throw new NotFoundException(`job_recruitment_id not found`);
+    }
     let otherRecruitIds: number[] = [];
     foundRecruit.companyEntity
       .jobRecruitmentEntities.sort((a, b) => a.id - b.id);
