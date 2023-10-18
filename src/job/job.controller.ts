@@ -23,7 +23,12 @@ export class JobController {
   async updateRecruitment(
   @Param('id') id: string, 
   @Body() updateJobDto: UpdateJobRecruitmentDto) {
-    return this.recruitService.update(+id, updateJobDto);
+    return await this.recruitService.update(+id, updateJobDto);
+  }
+
+  @Delete('/recruitments/:id')
+  async removeRecruitment(@Param('id') id: string) {
+    return await this.recruitService.remove(+id);
   }
 
   @Post()

@@ -62,15 +62,24 @@ export class RecruitmentsService {
     return ;
   }
 
+  async remove(id: number) {
+    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+      where: {
+        id: id,
+      }
+    });
+    if (foundRecruit === null) {
+      throw new NotFoundException(`job_recruitment_id not found`);
+    }
+    await this.jobRecruitmentEntity.delete(foundRecruit);
+    return ;
+  }
+
   findAll() {
     return `This action returns all recruitments`;
   }
 
   findOne(id: number) {
     return `This action returns a #${id} recruitment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} recruitment`;
   }
 }
