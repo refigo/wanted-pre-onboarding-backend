@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
 import { RecruitmentsService } from './recruitments.service';
-import { RecruitmentsController } from './recruitments.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
+import { CompanyEntity } from 'src/database/entities/company.entity';
 
 @Module({
-  controllers: [RecruitmentsController],
-  providers: [RecruitmentsService]
+  imports: [
+    TypeOrmModule.forFeature([
+      JobRecruitmentEntity,
+      CompanyEntity
+    ])
+  ],
+  providers: [RecruitmentsService],
+  exports: [RecruitmentsService]
 })
 export class RecruitmentsModule {}

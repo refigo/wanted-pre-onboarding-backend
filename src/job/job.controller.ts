@@ -2,10 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { RecruitmentsService } from './recruitments/recruitments.service';
+import { CreateJobRecruitmentDto } from './recruitments/dto/create-job-recruitment.dto';
 
 @Controller('job')
 export class JobController {
-  constructor(private readonly jobService: JobService) {}
+  constructor(
+    private readonly jobService: JobService,
+    private readonly recruitService: RecruitmentsService
+    ) {}
+
+  @Post('/recruitments')
+  async createRecruitment(
+  @Body() createRecruitDto: CreateJobRecruitmentDto) {
+    return await this.recruitService.create(createRecruitDto);
+  }
 
   @Post()
   create(@Body() createJobDto: CreateJobDto) {
