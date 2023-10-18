@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
 import { CompanyEntity } from 'src/database/entities/company.entity';
+import { ResponseJobRecruitmentDto } from './dto/response-job-recruitment.dto';
 
 @Injectable()
 export class RecruitmentsService {
@@ -76,9 +77,25 @@ export class RecruitmentsService {
   }
 
   async findAll() {
-    const foundRecruits = await this.jobRecruitmentEntity.find();
+    const ret: ResponseJobRecruitmentDto[] = [];
+    const foundRecruits = await this.jobRecruitmentEntity.find({
+      relations: {
+        companyEntity: true,
+      }
+    });
     foundRecruits.sort((a, b) => a.id - b.id);
-    return foundRecruits;
+    for (const eachRecruit of foundRecruits) {
+      ret.push({
+        recruitment_id: eachRecruit.id,
+        company_name: eachRecruit.companyEntity.name,
+        nation: eachRecruit.companyEntity.name,
+        area: eachRecruit.companyEntity.area,
+        position: eachRecruit.position,
+        compensation: eachRecruit.compensation,
+        skills: eachRecruit.skills
+      });
+    }
+    return ret;
   }
 
   findOne(id: number) {
