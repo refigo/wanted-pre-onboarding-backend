@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RecruitmentsService } from './recruitments.service';
+import { JobRecruitmentsService } from './job-recruitments.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
 import { CompanyEntity } from 'src/database/entities/company.entity';
@@ -11,7 +11,7 @@ import { CompanyEntity } from 'src/database/entities/company.entity';
       CompanyEntity
     ])
   ],
-  providers: [RecruitmentsService],
-  exports: [RecruitmentsService]
+  providers: [JobRecruitmentsService],
+  exports: [JobRecruitmentsService]
 })
-export class RecruitmentsModule {}
+export class JobRecruitmentsModule {}

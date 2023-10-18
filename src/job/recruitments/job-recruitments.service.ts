@@ -9,7 +9,7 @@ import { ResponseJobRecruitmentDto } from './dto/response-job-recruitment.dto';
 import { ResponseDetailsJobRecruitmentDto } from './dto/response-details-job-recruitment.dto';
 
 @Injectable()
-export class RecruitmentsService {
+export class JobRecruitmentsService {
   constructor(
     @InjectRepository(CompanyEntity)
     private readonly companyEntity: Repository<CompanyEntity>,
