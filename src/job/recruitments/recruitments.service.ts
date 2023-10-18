@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobRecruitmentDto } from './dto/create-job-recruitment.dto';
-import { UpdateRecruitmentDto } from './dto/update-job-recruitment.dto';
+import { UpdateJobRecruitmentDto } from './dto/update-job-recruitment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
@@ -37,16 +37,37 @@ export class RecruitmentsService {
     };
   }
 
+  async update(id: number, updateRecruitmentDto: UpdateJobRecruitmentDto) {
+    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+      where: {
+        id: id,
+      }
+    });
+    if (foundRecruit === null) {
+      throw new NotFoundException(`job_recruitment_id not found`);
+    }
+    if (updateRecruitmentDto.position !== undefined) {
+      foundRecruit.position = updateRecruitmentDto.position;
+    }
+    if (updateRecruitmentDto.compensation !== undefined) {
+      foundRecruit.compensation = updateRecruitmentDto.compensation;
+    }
+    if (updateRecruitmentDto.contents !== undefined) {
+      foundRecruit.contents = updateRecruitmentDto.contents;
+    }
+    if (updateRecruitmentDto.skills !== undefined) {
+      foundRecruit.skills = updateRecruitmentDto.skills;
+    }
+    await this.jobRecruitmentEntity.save(foundRecruit);
+    return ;
+  }
+
   findAll() {
     return `This action returns all recruitments`;
   }
 
   findOne(id: number) {
     return `This action returns a #${id} recruitment`;
-  }
-
-  update(id: number, updateRecruitmentDto: UpdateRecruitmentDto) {
-    return `This action updates a #${id} recruitment`;
   }
 
   remove(id: number) {

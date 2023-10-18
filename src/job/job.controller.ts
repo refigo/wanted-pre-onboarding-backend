@@ -4,6 +4,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { RecruitmentsService } from './recruitments/recruitments.service';
 import { CreateJobRecruitmentDto } from './recruitments/dto/create-job-recruitment.dto';
+import { UpdateJobRecruitmentDto } from './recruitments/dto/update-job-recruitment.dto';
 
 @Controller('job')
 export class JobController {
@@ -16,6 +17,13 @@ export class JobController {
   async createRecruitment(
   @Body() createRecruitDto: CreateJobRecruitmentDto) {
     return await this.recruitService.create(createRecruitDto);
+  }
+
+  @Patch('/recruitments/:id')
+  async updateRecruitment(
+  @Param('id') id: string, 
+  @Body() updateJobDto: UpdateJobRecruitmentDto) {
+    return this.recruitService.update(+id, updateJobDto);
   }
 
   @Post()
