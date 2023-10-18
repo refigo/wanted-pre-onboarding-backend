@@ -6,15 +6,15 @@ import { Repository } from 'typeorm';
 import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
 import { CompanyEntity } from 'src/database/entities/company.entity';
 import { ResponseJobRecruitmentDto } from './dto/response-job-recruitment.dto';
-import { ResponseDetailsJobRecruitmentDto } from './dto/response-details-job-recruitment.dto';
+import { ResponseJobRecruitmentDetailsDto } from './dto/response-job-recruitment-details.dto';
 
 @Injectable()
 export class JobRecruitmentsService {
   constructor(
-    @InjectRepository(CompanyEntity)
-    private readonly companyEntity: Repository<CompanyEntity>,
     @InjectRepository(JobRecruitmentEntity)
     private readonly jobRecruitmentEntity: Repository<JobRecruitmentEntity>,
+    @InjectRepository(CompanyEntity)
+    private readonly companyEntity: Repository<CompanyEntity>,
   ) {}
 
   async create(createRecruitmentDto: CreateJobRecruitmentDto) {
@@ -35,12 +35,13 @@ export class JobRecruitmentsService {
     });
     const savedJobRcrt = await this.jobRecruitmentEntity.save(newJobRcrt);
     return {
-      "job_recruitment_id": savedJobRcrt.id
+      "job_recruitment_id": +(savedJobRcrt.id)
     };
   }
 
   async update(id: number, updateRecruitmentDto: UpdateJobRecruitmentDto) {
-    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+    const foundRecruit: JobRecruitmentEntity 
+    = await this.jobRecruitmentEntity.findOne({
       where: {
         id: id,
       }
@@ -65,7 +66,8 @@ export class JobRecruitmentsService {
   }
 
   async remove(id: number) {
-    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+    const foundRecruit: JobRecruitmentEntity 
+    = await this.jobRecruitmentEntity.findOne({
       where: {
         id: id,
       }
@@ -79,7 +81,8 @@ export class JobRecruitmentsService {
 
   async findAll() {
     let ret: ResponseJobRecruitmentDto[] = [];
-    const foundRecruits = await this.jobRecruitmentEntity.find({
+    const foundRecruits: JobRecruitmentEntity[] 
+    = await this.jobRecruitmentEntity.find({
       relations: {
         companyEntity: true,
       }
@@ -87,7 +90,7 @@ export class JobRecruitmentsService {
     foundRecruits.sort((a, b) => a.id - b.id);
     for (const eachRecruit of foundRecruits) {
       ret.push({
-        recruitment_id: eachRecruit.id,
+        job_recruitment_id: +(eachRecruit.id),
         company_name: eachRecruit.companyEntity.name,
         nation: eachRecruit.companyEntity.name,
         area: eachRecruit.companyEntity.area,
@@ -99,9 +102,10 @@ export class JobRecruitmentsService {
     return ret;
   }
 
-  async findOne(id: number) {
-    let ret: ResponseDetailsJobRecruitmentDto;
-    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+  async findOneDetails(id: number) {
+    let ret: ResponseJobRecruitmentDetailsDto;
+    const foundRecruit: JobRecruitmentEntity 
+    = await this.jobRecruitmentEntity.findOne({
       relations: {
         companyEntity: {
           jobRecruitmentEntities: true,
@@ -120,7 +124,7 @@ export class JobRecruitmentsService {
       otherRecruitIds.push(+(eachRecruit.id));
     }
     ret = {
-      recruitment_id: +(foundRecruit.id),
+      job_recruitment_id: +(foundRecruit.id),
       company_name: foundRecruit.companyEntity.name,
       nation: foundRecruit.companyEntity.nation,
       area: foundRecruit.companyEntity.area,
@@ -128,7 +132,7 @@ export class JobRecruitmentsService {
       compensation: foundRecruit.compensation,
       skills: foundRecruit.skills,
       contents: foundRecruit.contents,
-      recruitment_ids_of_company: otherRecruitIds,
+      ohter_job_recruitment_ids_of_company: otherRecruitIds,
     };
     return ret;
   }
