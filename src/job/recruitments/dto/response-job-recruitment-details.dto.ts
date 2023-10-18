@@ -1,5 +1,5 @@
-export class ResponseDetailsJobRecruitmentDto {
-	recruitment_id: number;
+export class ResponseJobRecruitmentDetailsDto {
+	job_recruitment_id: number;
 	company_name: string;
 	nation: string;
 	area: string;
@@ -7,5 +7,5 @@ export class ResponseDetailsJobRecruitmentDto {
 	compensation: number;
 	skills: string;
 	contents: string;
-	recruitment_ids_of_company: number[];
+	ohter_job_recruitment_ids_of_company: number[];
 }
