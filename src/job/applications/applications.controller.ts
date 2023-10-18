@@ -14,7 +14,9 @@ export class ApplicationsController {
 
   @Get()
   findAll() {
-    return this.applicationsService.findAll();
+    console.log("Hello! GET /job/applications");
+    return "hello";
+    // return this.applicationsService.findAll();
   }
 
   @Get(':id')

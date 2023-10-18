@@ -2,10 +2,44 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { JobRecruitmentsService } from './recruitments/job-recruitments.service';
+import { CreateJobRecruitmentDto } from './recruitments/dto/create-job-recruitment.dto';
+import { UpdateJobRecruitmentDto } from './recruitments/dto/update-job-recruitment.dto';
 
 @Controller('job')
 export class JobController {
-  constructor(private readonly jobService: JobService) {}
+  constructor(
+    private readonly jobService: JobService,
+    private readonly recruitService: JobRecruitmentsService
+    ) {}
+
+  @Post('/recruitments')
+  async createRecruitment(
+  @Body() createRecruitDto: CreateJobRecruitmentDto) {
+    return await this.recruitService.create(createRecruitDto);
+  }
+
+  @Patch('/recruitments/:id')
+  async updateRecruitment(
+  @Param('id') id: string, 
+  @Body() updateJobDto: UpdateJobRecruitmentDto) {
+    return await this.recruitService.update(+id, updateJobDto);
+  }
+
+  @Delete('/recruitments/:id')
+  async removeRecruitment(@Param('id') id: string) {
+    return await this.recruitService.remove(+id);
+  }
+
+  @Get('/recruitments')
+  async findAllRecruitments() {
+    return await this.recruitService.findAll();
+  }
+
+  @Get('/recruitments/:id/details')
+  async findOneRecruitmentDetails(@Param('id') id: string) {
+    return await this.recruitService.findOneDetails(+id);
+  }
 
   @Post()
   create(@Body() createJobDto: CreateJobDto) {
