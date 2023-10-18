@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobRecruitmentDto } from './dto/create-job-recruitment.dto';
 import { UpdateJobRecruitmentDto } from './dto/update-job-recruitment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { JobRecruitmentEntity } from 'src/database/entities/job.recruitment.entity';
 import { CompanyEntity } from 'src/database/entities/company.entity';
 import { ResponseJobRecruitmentDto } from './dto/response-job-recruitment.dto';
@@ -137,6 +137,41 @@ export class JobRecruitmentsService {
       contents: foundRecruit.contents,
       ohter_job_recruitment_ids_of_company: otherRecruitIds,
     };
+    return ret;
+  }
+
+  async findBySearchTerm(search: string) {
+    let ret: ResponseJobRecruitmentDto[] = [];
+    const foundRecruits: JobRecruitmentEntity[] 
+    = await this.jobRecruitmentEntity.find({
+      where: [
+        { position: Like(`%${search}%`) },
+        { contents: Like(`%${search}%`) },
+        { skills: Like(`%${search}%`) },
+        {
+          companyEntity: [
+            { name: Like(`%${search}%`) },
+            { nation: Like(`%${search}%`) },
+            { area: Like(`%${search}%`) }
+          ]
+        }
+      ],
+      relations: {
+        companyEntity: true
+      }
+    });
+    foundRecruits.sort((a, b) => a.id - b.id);
+    for (const eachRecruit of foundRecruits) {
+      ret.push({
+        job_recruitment_id: +(eachRecruit.id),
+        company_name: eachRecruit.companyEntity.name,
+        nation: eachRecruit.companyEntity.name,
+        area: eachRecruit.companyEntity.area,
+        position: eachRecruit.position,
+        compensation: eachRecruit.compensation,
+        skills: eachRecruit.skills
+      });
+    }
     return ret;
   }
 }
