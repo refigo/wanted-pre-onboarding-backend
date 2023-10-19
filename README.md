@@ -5,6 +5,10 @@
 
 ## 관계형 데이터 모델링
 
+![Alt text](./docs/images/erd_modeling.png)
+
+- ERD Cloud Link: https://www.erdcloud.com/d/MEq9L3KrcRKmm2tBH
+
 ## 환경 설정
 
 ## 실행 방법
