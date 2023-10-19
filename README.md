@@ -198,3 +198,248 @@ $ npm run start:dev
     - (user_id not found)
 
 ## 구현 과정
+
+### `POST /job/recruitments`
+
+- `CreateJobRecruitmentDto` 정의
+	- Data Validation 적용
+```ts
+import { IsInt, IsNotEmpty, IsString, Min } from "class-validator";
+
+export class CreateJobRecruitmentDto {
+	@IsNotEmpty()
+	@IsInt()
+	company_id: number;
+
+	@IsNotEmpty()
+	@IsString()
+	position: string;
+
+	@IsNotEmpty()
+	@IsInt()
+	@Min(0)
+	compensation: number;
+
+	@IsNotEmpty()
+	@IsString()
+	contents: string;
+
+	@IsNotEmpty()
+	@IsString()
+	skills: string;
+}
+```
+
+- 비즈니스 로직 코드 - `JobRecruitmentService.create()`
+```ts
+  async create(createRecruitmentDto: CreateJobRecruitmentDto) {
+    const foundCompany: CompanyEntity = await this.companyEntity.findOne({
+      where: {
+        id: createRecruitmentDto.company_id,
+      }
+    });
+    if (foundCompany === null) {
+      throw new NotFoundException(`company_id not found`);
+    }
+    const newJobRcrt: JobRecruitmentEntity = this.jobRecruitmentEntity.create({
+      position: createRecruitmentDto.position,
+      compensation: createRecruitmentDto.compensation,
+      contents: createRecruitmentDto.contents,
+      skills: createRecruitmentDto.skills,
+      companyEntity: foundCompany,
+    });
+    const savedJobRcrt = await this.jobRecruitmentEntity.save(newJobRcrt);
+    return {
+      "job_recruitment_id": +(savedJobRcrt.id)
+    };
+  }
+```
+
+### `PATCH /job/recruitments/:id`
+
+
+- `CreateJobRecruitmentDto` 정의
+```ts
+export class UpdateJobRecruitmentDto extends PartialType(CreateJobRecruitmentDto) {}
+```
+
+- 비즈니스 로직 코드 - `JobRecruitmentService.update()`
+```ts
+  async update(id: number, updateRecruitmentDto: UpdateJobRecruitmentDto) {
+    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+      where: {
+        id: id,
+      }
+    });
+    if (foundRecruit === null) {
+      throw new NotFoundException(`job_recruitment_id not found`);
+    }
+    if (updateRecruitmentDto.position !== undefined) {
+      foundRecruit.position = updateRecruitmentDto.position;
+    }
+    if (updateRecruitmentDto.compensation !== undefined) {
+      foundRecruit.compensation = updateRecruitmentDto.compensation;
+    }
+    if (updateRecruitmentDto.contents !== undefined) {
+      foundRecruit.contents = updateRecruitmentDto.contents;
+    }
+    if (updateRecruitmentDto.skills !== undefined) {
+      foundRecruit.skills = updateRecruitmentDto.skills;
+    }
+    await this.jobRecruitmentEntity.save(foundRecruit);
+    return ;
+  }
+```
+
+### `DELETE /job/recruitments/:id`
+
+- 비즈니스 로직 코드 - `JobRecruitmentService.delete()`
+```ts
+  async remove(id: number) {
+    const foundRecruit = await this.jobRecruitmentEntity.findOne({
+      where: {
+        id: id,
+      }
+    });
+    if (foundRecruit === null) {
+      throw new NotFoundException(`job_recruitment_id not found`);
+    }
+    await this.jobRecruitmentEntity.delete(foundRecruit);
+    return ;
+  }
+```
+
+### `GET /job/recruitments`
+
+- `ResponseJobRecruitmentDto` 정의
+```ts
+export class ResponseJobRecruitmentDto {
+	recruitment_id: number;
+	company_name: string;
+	nation: string;
+	area: string;
+	position: string;
+	compensation: number;
+	skills: string;
+}
+```
+
+- 비즈니스 로직 코드 - `JobRecruitmentService.findAll()`
+```ts
+  async findAll() {
+    const ret: ResponseJobRecruitmentDto[] = [];
+    const foundRecruits = await this.jobRecruitmentEntity.find({
+      relations: {
+        companyEntity: true,
+      }
+    });
+    foundRecruits.sort((a, b) => a.id - b.id);
+    for (const eachRecruit of foundRecruits) {
+      ret.push({
+        recruitment_id: +(eachRecruit.id),
+        company_name: eachRecruit.companyEntity.name,
+        nation: eachRecruit.companyEntity.name,
+        area: eachRecruit.companyEntity.area,
+        position: eachRecruit.position,
+        compensation: eachRecruit.compensation,
+        skills: eachRecruit.skills
+      });
+    }
+    return ret;
+  }
+```
+
+### `GET /job/recruitments?search=${string}`
+
+- 비즈니스 로직 코드 - `JobRecruitmentService.findBySearchTerm()`
+```ts
+  async findBySearchTerm(search: string) {
+    let ret: ResponseJobRecruitmentDto[] = [];
+    const foundRecruits: JobRecruitmentEntity[] 
+    = await this.jobRecruitmentEntity.find({
+      where: [
+        { position: Like(`%${search}%`) },
+        { contents: Like(`%${search}%`) },
+        { skills: Like(`%${search}%`) },
+        {
+          companyEntity: [
+            { name: Like(`%${search}%`) },
+            { nation: Like(`%${search}%`) },
+            { area: Like(`%${search}%`) }
+          ]
+        }
+      ],
+      relations: {
+        companyEntity: true
+      }
+    });
+    foundRecruits.sort((a, b) => a.id - b.id);
+    for (const eachRecruit of foundRecruits) {
+      ret.push({
+        job_recruitment_id: +(eachRecruit.id),
+        company_name: eachRecruit.companyEntity.name,
+        nation: eachRecruit.companyEntity.name,
+        area: eachRecruit.companyEntity.area,
+        position: eachRecruit.position,
+        compensation: eachRecruit.compensation,
+        skills: eachRecruit.skills
+      });
+    }
+    return ret;
+  }
+```
+
+### `GET /job/recruitments/:id/details`
+
+- `ResponseJobRecruitmentDetailsDto` 정의
+```ts
+export class ResponseJobRecruitmentDetailsDto {
+	job_recruitment_id: number;
+	company_name: string;
+	nation: string;
+	area: string;
+	position: string;
+	compensation: number;
+	skills: string;
+	contents: string;
+	ohter_job_recruitment_ids_of_company: number[];
+}
+```
+
+- 비즈니스 로직 코드 - `JobRecruitmentService.findOneDetails`
+```ts
+  async findOneDetails(id: number) {
+    let ret: ResponseJobRecruitmentDetailsDto;
+    const foundRecruit: JobRecruitmentEntity 
+    = await this.jobRecruitmentEntity.findOne({
+      relations: {
+        companyEntity: {
+          jobRecruitmentEntities: true,
+        }
+      },
+      where: {
+        id: id,
+      }
+    });
+    let otherRecruitIds: number[] = [];
+    foundRecruit.companyEntity
+      .jobRecruitmentEntities.sort((a, b) => a.id - b.id);
+    for (const eachRecruit 
+    of foundRecruit.companyEntity.jobRecruitmentEntities) {
+      if (+(eachRecruit.id) === id) continue;
+      otherRecruitIds.push(+(eachRecruit.id));
+    }
+    ret = {
+      job_recruitment_id: +(foundRecruit.id),
+      company_name: foundRecruit.companyEntity.name,
+      nation: foundRecruit.companyEntity.nation,
+      area: foundRecruit.companyEntity.area,
+      position: foundRecruit.position,
+      compensation: foundRecruit.compensation,
+      skills: foundRecruit.skills,
+      contents: foundRecruit.contents,
+      ohter_job_recruitment_ids_of_company: otherRecruitIds,
+    };
+    return ret;
+  }
+```
