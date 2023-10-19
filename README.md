@@ -31,6 +31,16 @@ DB_NAME=
 
 ## 실행 방법
 
+- 서버 실행
+```bash
+$ npm run start
+```
+
+- 개발 모드로 실행
+```bash
+$ npm run start:dev
+```
+
 ## 요구 사항 분석
 
 ## 구현 과정
