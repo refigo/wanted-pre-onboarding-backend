@@ -5,12 +5,15 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { JobRecruitmentsService } from './recruitments/job-recruitments.service';
 import { CreateJobRecruitmentDto } from './recruitments/dto/create-job-recruitment.dto';
 import { UpdateJobRecruitmentDto } from './recruitments/dto/update-job-recruitment.dto';
+import { JobApplicationsService } from './applications/job-applications.service';
+import { CreateJobApplicationDto } from './applications/dto/create-application.dto';
 
 @Controller('job')
 export class JobController {
   constructor(
     private readonly jobService: JobService,
-    private readonly recruitService: JobRecruitmentsService
+    private readonly recruitService: JobRecruitmentsService,
+    private readonly applicService: JobApplicationsService
     ) {}
 
   @Post('/recruitments')
@@ -44,6 +47,11 @@ export class JobController {
   @Get('/recruitments/:id/details')
   async findOneRecruitmentDetails(@Param('id') id: string) {
     return await this.recruitService.findOneDetails(+id);
+  }
+
+  @Post('/applications')
+  async createApplication(@Body() createApplicDto: CreateJobApplicationDto) {
+    return await this.applicService.create(createApplicDto);
   }
 
   @Post()
