@@ -70,7 +70,7 @@ $ npm run start:dev
 #### Request
 - REST API: `PATCH /job/recruitments/:id`
 - Body
-```json
+```
 {
 	"position": string,
 	"compensation": number,
@@ -99,7 +99,7 @@ $ npm run start:dev
 #### Response
 - 성공: 200 OK
 - 반환 데이터 형식
-```json
+```
 [
 	{
 		"job_recruitment_id": number,
@@ -131,7 +131,7 @@ $ npm run start:dev
 #### Response
 - 성공: 200 OK
 - 반환 데이터 형식
-```json
+```
 [
 	{
 		"job_recruitment_id": number,
@@ -163,7 +163,7 @@ $ npm run start:dev
 #### Response
 - 성공: 200 OK
 - 반환 데이터 형식
-```json
+```
 {
 	"job_recruitment_id": number,
 	"company_name": string,
@@ -182,7 +182,7 @@ $ npm run start:dev
 
 #### Request
 - REST API: `POST /job/applications`
-```json
+```
 {
 	"job_recruitment_id": number,
 	"user_id": number
