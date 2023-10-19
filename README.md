@@ -50,7 +50,7 @@ $ npm run start:dev
 #### Request
 - REST API: `POST /job/recruitments`
 - Body
-```json
+```
 {
 	"company_id": number,
 	"position": string,
