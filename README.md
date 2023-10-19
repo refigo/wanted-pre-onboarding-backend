@@ -1,4 +1,7 @@
 ## 기술 정보
+- 언어 및 프레임워크: Node.js & NestJS
+- ORM: TypeORM
+- RDBMS: PostgreSQL
 
 ## 관계형 데이터 모델링
 
