@@ -26,6 +26,7 @@ DB_NAME=
 ```
 
 - PostgreSQL 설치 및 실행
+
 위 환경변수와 맞춰서 데이터베이스 설정
 
 
@@ -35,6 +36,7 @@ DB_NAME=
 ```bash
 $ npm run start
 ```
+
 
 - 개발 모드로 실행
 ```bash
