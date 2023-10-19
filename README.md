@@ -61,6 +61,13 @@ $ npm run start:dev
 ```
 #### Response
 - 성공: 201 Created
+- 반환 데이터 형식
+```
+{
+  "job_recruitment_id": number
+}
+```
+
 - 실패
   - 400 Bad Request (Body 정보 누락)
   - 404 Not Found (company_id not found)
@@ -182,6 +189,7 @@ $ npm run start:dev
 
 #### Request
 - REST API: `POST /job/applications`
+- Body
 ```
 {
 	"job_recruitment_id": number,
@@ -191,11 +199,19 @@ $ npm run start:dev
 
 #### Response
 - 성공: 201 Created
+- 반환 데이터 형식
+```
+{
+  "job_application_id": number
+}
+```
 - 실패
-  - 400 Bad Request (Body 정보 누락)
+  - 400 Bad Request
+    - Body 정보 누락
+    - already created
   - 404 Not Found
-    - (recruitment_id not found)
-    - (user_id not found)
+    - recruitment_id not found
+    - user_id not found
 
 ## 구현 과정
 
@@ -441,5 +457,65 @@ export class ResponseJobRecruitmentDetailsDto {
       ohter_job_recruitment_ids_of_company: otherRecruitIds,
     };
     return ret;
+  }
+```
+
+### `POST /job/applications`
+
+- `CreateJobApplicationDto` 정의
+```ts
+import { IsInt, IsNotEmpty } from "class-validator";
+
+export class CreateJobApplicationDto {
+	@IsNotEmpty()
+	@IsInt()
+	"job_recruitment_id": number;
+
+	@IsNotEmpty()
+	@IsInt()
+	"user_id": number;
+}
+```
+
+- 비즈니스 로직 코드 - `JobApplicationService.create()`
+```ts
+  async create(createApplicationDto: CreateJobApplicationDto) {
+    const foundJobRecruit 
+    = await this.jobRecruitmentEntity.findOne({
+      where: {
+        id: createApplicationDto.job_recruitment_id
+      }
+    });
+    if (foundJobRecruit === null) {
+      throw new NotFoundException(`job_recruitment_id not found`);
+    }
+    const foundUser
+    = await this.userEntity.findOne({
+      where: {
+        id: createApplicationDto.user_id
+      }
+    });
+    if (foundUser === null) {
+      throw new NotFoundException(`user_id not found`);
+    }
+    const foundAlreadyApplic 
+    = await this.jobApplicationEntity.findOne({
+      where: {
+        userEntity: foundUser,
+        jobRecruitmentEntity: foundJobRecruit
+      }
+    });
+    if (foundAlreadyApplic !== null) {
+      throw new BadRequestException(`already created`);
+    }
+    const savedApplic 
+    = await this.jobApplicationEntity.save(
+        this.jobApplicationEntity.create({
+      userEntity: foundUser,
+      jobRecruitmentEntity: foundJobRecruit
+    }));
+    return {
+      "job_application_id": +(savedApplic.id)
+    };
   }
 ```
